@@ -1,0 +1,230 @@
+/* Кастомные стили для админки Hart Citizens */
+
+/* Основные цвета темы */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+}
+
+/* Заголовок сайта */
+.brand-link {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+}
+
+.brand-link .brand-text {
+    font-weight: bold;
+    color: white !important;
+}
+
+/* Навигационная панель */
+.main-header .navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+}
+
+/* Боковая панель */
+.main-sidebar .brand-link {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+}
+
+/* Активные элементы меню */
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.nav-sidebar .nav-item .nav-link:hover {
+    background-color: rgba(102, 126, 234, 0.1) !important;
+}
+
+/* Карточки статистики */
+.info-box {
+    border-left: 4px solid var(--primary-color) !important;
+}
+
+.info-box .info-box-icon {
+    background-color: var(--primary-color) !important;
+}
+
+/* Кнопки */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: #5a6fd8 !important;
+    border-color: #5a6fd8 !important;
+}
+
+/* Таблицы */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(102, 126, 234, 0.05) !important;
+}
+
+/* Формы */
+.form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+}
+
+/* Алерты */
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+    border-color: var(--success-color) !important;
+    color: var(--success-color) !important;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    border-color: var(--warning-color) !important;
+    color: #856404 !important;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-color: var(--danger-color) !important;
+    color: var(--danger-color) !important;
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.1) !important;
+    border-color: var(--info-color) !important;
+    color: var(--info-color) !important;
+}
+
+/* Иконки в меню */
+.nav-sidebar .nav-item .nav-link i {
+    color: var(--primary-color) !important;
+}
+
+/* Футер */
+.main-footer {
+    background-color: #f8f9fa !important;
+    border-top: 1px solid #dee2e6 !important;
+}
+
+/* Кастомные стили для моделей */
+.field-box {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+}
+
+.field-box h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Стили для импорт/экспорт */
+.import_export {
+    background-color: rgba(102, 126, 234, 0.1);
+    border: 1px solid var(--primary-color);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Стили для логов */
+.log-entry {
+    border-left: 4px solid var(--info-color);
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.log-entry.success {
+    border-left-color: var(--success-color);
+}
+
+.log-entry.warning {
+    border-left-color: var(--warning-color);
+}
+
+.log-entry.error {
+    border-left-color: var(--danger-color);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .main-sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .main-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+}
+
+/* Анимации */
+.nav-sidebar .nav-item .nav-link {
+    transition: all 0.3s ease;
+}
+
+.info-box {
+    transition: transform 0.2s ease;
+}
+
+.info-box:hover {
+    transform: translateY(-2px);
+}
+
+/* Стили для тестовых данных */
+.test-data-highlight {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 1px solid var(--warning-color);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+/* Стили для статистики */
+.stats-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stats-card h3 {
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card .stats-number {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Стили для экспорта */
+.export-section {
+    background-color: rgba(40, 167, 69, 0.1);
+    border: 1px solid var(--success-color);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.export-section h4 {
+    color: var(--success-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Стили для фильтров */
+.filter-section {
+    background-color: rgba(23, 162, 184, 0.1);
+    border: 1px solid var(--info-color);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.filter-section h4 {
+    color: var(--info-color);
+    margin-bottom: 0.5rem;
+}
