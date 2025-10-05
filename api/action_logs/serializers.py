@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import ActionLog
+from action_logs.models import ActionLog
 
 
 class ActionLogSerializer(serializers.ModelSerializer):

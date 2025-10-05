@@ -34,7 +34,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lamb
 # Application definition
 
 INSTALLED_APPS = [
-    "jazzmin",
+    # "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     # Third party apps
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "import_export",
-    "drf_spectacular",
-    "django_jinja",
-    "corsheaders",
+    # "rest_framework",
+    # "rest_framework_simplejwt",
+    # "import_export",
+    # "drf_spectacular",
+    # "django_jinja",
+    # "corsheaders",
     
     # Local apps
     "users",
@@ -85,37 +85,37 @@ TEMPLATES = [
             ],
         },
     },
-    {
-        "BACKEND": "django_jinja.backend.Jinja2",
-        "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "match_extension": ".jinja",
-            "match_regex": r"^(?!admin/).*",
-            "app_dirname": "templates",
-            "undefined": "jinja2.StrictUndefined",
-            "newstyle_gettext": True,
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-            "extensions": [
-                "jinja2.ext.do",
-                "jinja2.ext.loopcontrols",
-                "jinja2.ext.with_",
-                "jinja2.ext.i18n",
-                "jinja2.ext.autoescape",
-                "django_jinja.builtins.extensions.CsrfExtension",
-                "django_jinja.builtins.extensions.CacheExtension",
-                "django_jinja.builtins.extensions.TimezoneExtension",
-                "django_jinja.builtins.extensions.UrlsExtension",
-                "django_jinja.builtins.extensions.StaticFilesExtension",
-                "django_jinja.builtins.extensions.DjangoFiltersExtension",
-            ],
-        },
-    },
+    # {
+    #     "BACKEND": "django_jinja.backend.Jinja2",
+    #     "DIRS": [BASE_DIR / "templates"],
+    #     "APP_DIRS": True,
+    #     "OPTIONS": {
+    #         "match_extension": ".jinja",
+    #         "match_regex": r"^(?!admin/).*",
+    #         "app_dirname": "templates",
+    #         "undefined": "jinja2.StrictUndefined",
+    #         "newstyle_gettext": True,
+    #         "context_processors": [
+    #             "django.template.context_processors.debug",
+    #             "django.template.context_processors.request",
+    #             "django.contrib.auth.context_processors.auth",
+    #             "django.contrib.messages.context_processors.messages",
+    #         ],
+    #         "extensions": [
+    #             "jinja2.ext.do",
+    #             "jinja2.ext.loopcontrols",
+    #             "jinja2.ext.with_",
+    #             "jinja2.ext.i18n",
+    #             "jinja2.ext.autoescape",
+    #             "django_jinja.builtins.extensions.CsrfExtension",
+    #             "django_jinja.builtins.extensions.CacheExtension",
+    #             "django_jinja.builtins.extensions.TimezoneExtension",
+    #             "django_jinja.builtins.extensions.UrlsExtension",
+    #             "django_jinja.builtins.extensions.StaticFilesExtension",
+    #             "django_jinja.builtins.extensions.DjangoFiltersExtension",
+    #         ],
+    #     },
+    # },
 ]
 
 WSGI_APPLICATION = "hart_citizens_project.wsgi.application"

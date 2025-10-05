@@ -13,7 +13,8 @@ from django.utils import timezone
 import logging
 
 from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm
-from .models import User, ActionLog
+from .models import User
+from action_logs.models import ActionLog
 from kingdom.models import Kingdom, Citizen, King
 
 logger = logging.getLogger('users')

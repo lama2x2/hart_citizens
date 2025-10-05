@@ -1,23 +1,23 @@
 from django.contrib import admin
-from import_export import resources
-from import_export.admin import ImportExportModelAdmin
+# from import_export import resources
+# from import_export.admin import ImportExportModelAdmin
 
 from .models import ActionLog
 
 
-class ActionLogResource(resources.ModelResource):
-    """Ресурс для импорта/экспорта логов"""
-    
-    class Meta:
-        model = ActionLog
-        fields = ('id', 'user__email', 'action', 'description', 'ip_address', 'created_at')
+# class ActionLogResource(resources.ModelResource):
+#     """Ресурс для импорта/экспорта логов"""
+#     
+#     class Meta:
+#         model = ActionLog
+#         fields = ('id', 'user__email', 'action', 'description', 'ip_address', 'created_at')
 
 
 @admin.register(ActionLog)
-class ActionLogAdmin(ImportExportModelAdmin):
+class ActionLogAdmin(admin.ModelAdmin):
     """Админка для модели ActionLog"""
     
-    resource_class = ActionLogResource
+    # resource_class = ActionLogResource
     list_display = ('user_name', 'action_display', 'description_short', 'ip_address', 'created_at')
     list_filter = ('action', 'created_at', 'user__role')
     search_fields = ('user__first_name', 'user__last_name', 'user__email', 'description')

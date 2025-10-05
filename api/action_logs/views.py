@@ -7,8 +7,8 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from ..models import ActionLog
-from ..utils import export_logs_to_excel
+from action_logs.models import ActionLog
+from action_logs.utils import export_logs_to_excel
 from .serializers import ActionLogSerializer
 
 
