@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     # Third party apps
-    # "rest_framework",
-    # "rest_framework_simplejwt",
+    "rest_framework",
+    "rest_framework_simplejwt",
     "import_export",
-    # "drf_spectacular",
+    "drf_spectacular",
     # "django_jinja",
     # "corsheaders",
     

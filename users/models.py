@@ -2,23 +2,23 @@ import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class UserManager(BaseUserManager):
     """Менеджер для кастомной модели пользователя"""
     
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, username, password=None, **extra_fields):
         """Создание обычного пользователя"""
-        if not email:
-            raise ValueError('Email обязателен')
+        if not username:
+            raise ValueError('Username обязателен')
         
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(self, username, password=None, **extra_fields):
         """Создание суперпользователя"""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Суперпользователь должен иметь is_superuser=True')
         
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(username, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -40,7 +40,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField(unique=True, verbose_name='Email')
+    username = models.CharField(max_length=150, unique=True, verbose_name='Имя пользователя')
+    email = models.EmailField(blank=True, null=True, verbose_name='Email (только для подданных)')
     first_name = models.CharField(max_length=150, verbose_name='Имя')
     last_name = models.CharField(max_length=150, verbose_name='Фамилия')
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, verbose_name='Роль')
@@ -52,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     objects = UserManager()
     
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'role']
     
     class Meta:
@@ -61,15 +62,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_table = 'users'
     
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.email})"
+        return f"{self.username} ({self.first_name} {self.last_name})"
     
     def get_full_name(self):
         """Возвращает полное имя пользователя"""
         return f"{self.first_name} {self.last_name}"
     
-    def get_short_name(self):
-        """Возвращает короткое имя пользователя"""
-        return self.first_name
+    def clean(self):
+        """Валидация модели"""
+        super().clean()
+        if self.role == 'citizen' and not self.email:
+            raise ValidationError({
+                'email': 'Email обязателен для подданных (голубь для связи)'
+            })
+    
+    def save(self, *args, **kwargs):
+        """Переопределяем save для валидации"""
+        self.full_clean()
+        super().save(*args, **kwargs)
     
     @property
     def is_king(self):

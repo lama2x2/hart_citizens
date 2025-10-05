@@ -6,7 +6,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 import logging
 
-from users.models import User, ActionLog
+from users.models import User
+from action_logs.models import ActionLog
 from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer
 
 logger = logging.getLogger('users')

@@ -30,6 +30,7 @@ class KingdomViewSet(viewsets.ReadOnlyModelViewSet):
 
 class KingViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet для модели King"""
+    queryset = King.objects.all()
     serializer_class = KingSerializer
     permission_classes = [IsAuthenticated]
     
@@ -42,6 +43,7 @@ class KingViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CitizenViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Citizen"""
+    queryset = Citizen.objects.all()
     serializer_class = CitizenSerializer
     permission_classes = [IsAuthenticated]
     
@@ -63,6 +65,7 @@ class CitizenViewSet(viewsets.ModelViewSet):
 
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet для модели Test"""
+    queryset = Test.objects.all()
     serializer_class = TestSerializer
     permission_classes = [IsAuthenticated]
     
@@ -77,6 +80,7 @@ class TestViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TestAttemptViewSet(viewsets.ModelViewSet):
     """ViewSet для модели TestAttempt"""
+    queryset = TestAttempt.objects.all()
     serializer_class = TestAttemptSerializer
     permission_classes = [IsAuthenticated]
     

@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-# from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -30,17 +31,18 @@ urlpatterns = [
     path("action-logs/", include("action_logs.urls")),
     
     # API
-    # path("api/action-logs/", include("api.action_logs.urls")),
-    # path("api/kingdom/", include("api.kingdom.urls")),
-    # path("api/users/", include("api.users.urls")),
+    path("api/action-logs/", include("api.action_logs.urls")),
+    path("api/kingdom/", include("api.kingdom.urls")),
+    path("api/users/", include("api.users.urls")),
     
     # JWT
-    # path("api/auth/", include("rest_framework_simplejwt.urls")),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     
     # Swagger документация
-    # path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    # path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-    # path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 
 # Статические файлы для разработки

@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate
 from django.utils import timezone
 import logging
 
-from users.models import User, ActionLog
+from users.models import User
+from action_logs.models import ActionLog
 from kingdom.models import Kingdom, Citizen, King
 
 logger = logging.getLogger('users')
@@ -30,15 +31,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'role', 'password', 'password_confirm', 'kingdom_id')
+        fields = ('username', 'email', 'first_name', 'last_name', 'role', 'password', 'password_confirm', 'kingdom_id')
     
     def validate(self, attrs):
         """Валидация данных"""
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError("Пароли не совпадают")
         
-        if User.objects.filter(email=attrs['email']).exists():
-            raise serializers.ValidationError("Пользователь с таким email уже существует")
+        if User.objects.filter(username=attrs['username']).exists():
+            raise serializers.ValidationError("Пользователь с таким username уже существует")
+        
+        # Email обязателен только для подданных
+        if attrs['role'] == 'citizen' and not attrs.get('email'):
+            raise serializers.ValidationError("Email обязателен для подданных")
         
         return attrs
     
@@ -88,22 +93,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.Serializer):
     """Сериализатор для входа пользователя"""
-    email = serializers.EmailField()
+    username = serializers.CharField()
     password = serializers.CharField()
     
     def validate(self, attrs):
         """Валидация учетных данных"""
-        email = attrs.get('email')
+        username = attrs.get('username')
         password = attrs.get('password')
         
-        if email and password:
-            user = authenticate(email=email, password=password)
+        if username and password:
+            user = authenticate(username=username, password=password)
             if not user:
                 raise serializers.ValidationError('Неверные учетные данные')
             if not user.is_active:
                 raise serializers.ValidationError('Аккаунт неактивен')
             attrs['user'] = user
         else:
-            raise serializers.ValidationError('Email и пароль обязательны')
+            raise serializers.ValidationError('Username и пароль обязательны')
         
         return attrs
