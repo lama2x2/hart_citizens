@@ -32,7 +32,7 @@ class ActionLog(models.Model):
     description = models.TextField(blank=True, verbose_name='Описание')
     metadata = models.JSONField(default=dict, blank=True, verbose_name='Метаданные')
     ip_address = models.GenericIPAddressField(blank=True, null=True, verbose_name='IP адрес')
-    user_agent = models.TextField(blank=True, verbose_name='User Agent')
+    user_agent = models.TextField(blank=True, null=True, verbose_name='User Agent')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     
     class Meta:

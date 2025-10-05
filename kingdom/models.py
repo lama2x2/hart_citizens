@@ -252,3 +252,9 @@ class Answer(models.Model):
     
     def __str__(self):
         return f"{self.attempt.citizen.user.get_full_name()} - {self.question.text[:30]}..."
+    
+    def save(self, *args, **kwargs):
+        """Автоматически заполняем is_correct на основе ответа и правильного ответа вопроса"""
+        if self.is_correct is None:
+            self.is_correct = self.answer == self.question.correct_answer
+        super().save(*args, **kwargs)
