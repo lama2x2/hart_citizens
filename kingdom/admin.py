@@ -2,27 +2,22 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-# from import_export.admin import ImportExportModelAdmin
-# from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 from .models import (
     Kingdom, King, Citizen, Test, Question, 
     TestAttempt, Answer
 )
-
-
-# class KingdomResource(resources.ModelResource):
-#     """Ресурс для импорта/экспорта королевств"""
-#     
-#     class Meta:
-#         model = Kingdom
-#         fields = ('id', 'name', 'description', 'created_at', 'updated_at')
+from .resources import (
+    KingdomResource, KingResource, CitizenResource,
+    TestResource, QuestionResource, TestAttemptResource, AnswerResource
+)
 
 
 @admin.register(Kingdom)
-class KingdomAdmin(admin.ModelAdmin):
+class KingdomAdmin(ImportExportModelAdmin):
     """Админка для модели Kingdom"""
     
-    # resource_class = KingdomResource
+    resource_class = KingdomResource
     list_display = ('name', 'description_short', 'created_at', 'updated_at')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('name', 'description')
@@ -35,19 +30,13 @@ class KingdomAdmin(admin.ModelAdmin):
     description_short.short_description = 'Описание'
 
 
-# class KingResource(resources.ModelResource):
-#     """Ресурс для импорта/экспорта королей"""
-#     
-#     class Meta:
-#         model = King
-#         fields = ('id', 'user__email', 'kingdom__name', 'max_citizens', 'created_at', 'updated_at')
 
 
 @admin.register(King)
-class KingAdmin(admin.ModelAdmin):
+class KingAdmin(ImportExportModelAdmin):
     """Админка для модели King"""
     
-    # resource_class = KingResource
+    resource_class = KingResource
     list_display = ('user_name', 'kingdom_name', 'max_citizens', 'current_citizens_count', 'created_at')
     list_filter = ('created_at', 'max_citizens')
     search_fields = ('user__first_name', 'user__last_name', 'user__email', 'kingdom__name')
@@ -65,19 +54,13 @@ class KingAdmin(admin.ModelAdmin):
     kingdom_name.short_description = 'Королевство'
 
 
-# class CitizenResource(resources.ModelResource):
-#     """Ресурс для импорта/экспорта подданных"""
-#     
-#     class Meta:
-#         model = Citizen
-#         fields = ('id', 'user__email', 'kingdom__name', 'age', 'pigeon_email', 'is_enrolled', 'created_at')
 
 
 @admin.register(Citizen)
-class CitizenAdmin(admin.ModelAdmin):
+class CitizenAdmin(ImportExportModelAdmin):
     """Админка для модели Citizen"""
     
-    # resource_class = CitizenResource
+    resource_class = CitizenResource
     list_display = ('user_name', 'kingdom_name', 'age', 'pigeon_email', 'is_enrolled', 'king_name', 'created_at')
     list_filter = ('is_enrolled', 'kingdom', 'created_at', 'enrolled_at')
     search_fields = ('user__first_name', 'user__last_name', 'user__email', 'pigeon_email', 'kingdom__name')
@@ -108,8 +91,10 @@ class QuestionInline(admin.TabularInline):
 
 
 @admin.register(Test)
-class TestAdmin(admin.ModelAdmin):
+class TestAdmin(ImportExportModelAdmin):
     """Админка для модели Test"""
+    
+    resource_class = TestResource
     
     list_display = ('title', 'kingdom_name', 'is_active', 'questions_count', 'created_at')
     list_filter = ('is_active', 'created_at', 'kingdom')
@@ -130,8 +115,10 @@ class TestAdmin(admin.ModelAdmin):
 
 
 @admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
+class QuestionAdmin(ImportExportModelAdmin):
     """Админка для модели Question"""
+    
+    resource_class = QuestionResource
     
     list_display = ('text_short', 'test_title', 'correct_answer', 'order', 'created_at')
     list_filter = ('correct_answer', 'test__kingdom', 'created_at')
@@ -158,8 +145,10 @@ class AnswerInline(admin.TabularInline):
 
 
 @admin.register(TestAttempt)
-class TestAttemptAdmin(admin.ModelAdmin):
+class TestAttemptAdmin(ImportExportModelAdmin):
     """Админка для модели TestAttempt"""
+    
+    resource_class = TestAttemptResource
     
     list_display = ('citizen_name', 'test_title', 'status', 'score', 'total_questions', 'percentage', 'started_at')
     list_filter = ('status', 'test__kingdom', 'started_at', 'completed_at')
@@ -180,8 +169,10 @@ class TestAttemptAdmin(admin.ModelAdmin):
 
 
 @admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
+class AnswerAdmin(ImportExportModelAdmin):
     """Админка для модели Answer"""
+    
+    resource_class = AnswerResource
     
     list_display = ('attempt_citizen', 'question_short', 'answer', 'is_correct', 'answered_at')
     list_filter = ('is_correct', 'answered_at', 'question__test__kingdom')

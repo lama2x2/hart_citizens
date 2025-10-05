@@ -3,7 +3,10 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from import_export.admin import ImportExportModelAdmin
+
 from .models import User
+from .resources import UserResource
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -23,8 +26,10 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(BaseUserAdmin, ImportExportModelAdmin):
     """Админка для модели User"""
+    
+    resource_class = UserResource
     
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm

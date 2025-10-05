@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     # Third party apps
     # "rest_framework",
     # "rest_framework_simplejwt",
-    # "import_export",
+    "import_export",
     # "drf_spectacular",
     # "django_jinja",
     # "corsheaders",
