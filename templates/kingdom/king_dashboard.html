@@ -1,0 +1,222 @@
+{% extends "base/base.html" %}
+
+{% block title %}Панель короля - Кадровая служба королевства{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2">
+                    <i class="bi bi-crown-fill text-warning me-2"></i>
+                    Панель короля
+                </h1>
+                <div class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>
+                    {{ king.kingdom.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Текущие подданные</h6>
+                            <h3 class="mb-0">{{ king.current_citizens_count }}</h3>
+                        </div>
+                        <i class="bi bi-people-fill" style="font-size: 2rem; opacity: 0.7;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Максимум подданных</h6>
+                            <h3 class="mb-0">{{ king.max_citizens }}</h3>
+                        </div>
+                        <i class="bi bi-person-check-fill" style="font-size: 2rem; opacity: 0.7;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Кандидаты</h6>
+                            <h3 class="mb-0">{{ enrolled_citizens|length }}</h3>
+                        </div>
+                        <i class="bi bi-person-plus-fill" style="font-size: 2rem; opacity: 0.7;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кандидаты на зачисление -->
+    {% if enrolled_citizens %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-check me-2"></i>
+                            Кандидаты на зачисление
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Email</th>
+                                        <th>Возраст</th>
+                                        <th>Голубь</th>
+                                        <th>Результат теста</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for citizen in enrolled_citizens %}
+                                        <tr>
+                                            <td>{{ citizen.user.get_full_name }}</td>
+                                            <td>{{ citizen.user.email }}</td>
+                                            <td>{{ citizen.age }}</td>
+                                            <td>{{ citizen.pigeon_email }}</td>
+                                            <td>
+                                                {% with attempt=citizen.test_attempts.first %}
+                                                    {% if attempt %}
+                                                        <span class="badge bg-success">
+                                                            {{ attempt.score }}/{{ attempt.total_questions }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">Не пройден</span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{% url 'kingdom:citizen_details' citizen.id %}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i>Детали
+                                                    </a>
+                                                    {% if can_accept_more %}
+                                                        <form method="post" action="{% url 'kingdom:enroll_citizen' citizen.id %}" 
+                                                              style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-sm btn-success"
+                                                                    onclick="return confirm('Зачислить подданного {{ citizen.user.get_full_name }}?')">
+                                                                <i class="bi bi-person-plus me-1"></i>Зачислить
+                                                            </button>
+                                                        </form>
+                                                    {% else %}
+                                                        <button class="btn btn-sm btn-secondary" disabled>
+                                                            <i class="bi bi-x-circle me-1"></i>Лимит
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-person-x text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 text-muted">Нет кандидатов на зачисление</h5>
+                        <p class="text-muted">Подданные, прошедшие тестовое испытание, появятся здесь</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Текущие подданные -->
+    {% if current_citizens %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-people me-2"></i>
+                            Текущие подданные
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Email</th>
+                                        <th>Возраст</th>
+                                        <th>Голубь</th>
+                                        <th>Дата зачисления</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for citizen in current_citizens %}
+                                        <tr>
+                                            <td>{{ citizen.user.get_full_name }}</td>
+                                            <td>{{ citizen.user.email }}</td>
+                                            <td>{{ citizen.age }}</td>
+                                            <td>{{ citizen.pigeon_email }}</td>
+                                            <td>{{ citizen.enrolled_at|date:"d.m.Y H:i" }}</td>
+                                            <td>
+                                                <a href="{% url 'kingdom:citizen_details' citizen.id %}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye me-1"></i>Детали
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 text-muted">Нет зачисленных подданных</h5>
+                        <p class="text-muted">Зачисленные подданные появятся здесь</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Автообновление страницы каждые 30 секунд для получения новых кандидатов
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+</script>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends "base/base.html" %}
+
+{% block title %}Результаты тестирования - Кадровая служба королевства{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2">
+                    <i class="bi bi-clipboard-data me-2"></i>
+                    Результаты тестирования
+                </h1>
+                <div class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>
+                    {{ attempt.test.kingdom.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Общая статистика -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ attempt.score }}</h4>
+                    <small>Правильных ответов</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-x-circle-fill" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ attempt.wrong_answers }}</h4>
+                    <small>Неправильных ответов</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-percent" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ attempt.percentage }}%</h4>
+                    <small>Процент правильных</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-clock-fill" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ attempt.total_questions }}</h4>
+                    <small>Всего вопросов</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Информация о тесте -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Информация о тестировании
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Тест:</strong></td>
+                                    <td>{{ attempt.test.title }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Королевство:</strong></td>
+                                    <td>{{ attempt.test.kingdom.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Начато:</strong></td>
+                                    <td>{{ attempt.started_at|date:"d.m.Y в H:i" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Завершено:</strong></td>
+                                    <td>{{ attempt.completed_at|date:"d.m.Y в H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Статус:</strong></td>
+                                    <td>
+                                        {% if attempt.status == 'completed' %}
+                                            <span class="badge bg-success">Завершен</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ attempt.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Результат:</strong></td>
+                                    <td>
+                                        {% if attempt.percentage >= 70 %}
+                                            <span class="badge bg-success">Отлично</span>
+                                        {% elif attempt.percentage >= 50 %}
+                                            <span class="badge bg-warning">Удовлетворительно</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Неудовлетворительно</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Детальные результаты -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check me-2"></i>
+                        Детальные результаты
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Вопрос</th>
+                                    <th>Ваш ответ</th>
+                                    <th>Правильный ответ</th>
+                                    <th>Результат</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for answer in answers %}
+                                    <tr class="{% if answer.is_correct %}table-success{% else %}table-danger{% endif %}">
+                                        <td>{{ answer.question.order }}</td>
+                                        <td>{{ answer.question.text }}</td>
+                                        <td>
+                                            {% if answer.answer %}
+                                                <span class="badge bg-success">Да</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Нет</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if answer.question.correct_answer %}
+                                                <span class="badge bg-success">Да</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Нет</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if answer.is_correct %}
+                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                            {% else %}
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Действия -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{% url 'kingdom:citizen_dashboard' %}" class="btn btn-primary">
+                    <i class="bi bi-house me-2"></i>Вернуться в панель
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-secondary">
+                    <i class="bi bi-printer me-2"></i>Печать результатов
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        .navbar, .footer, .btn {
+            display: none !important;
+        }
+        .container {
+            max-width: none !important;
+        }
+    }
+</style>
+{% endblock %}

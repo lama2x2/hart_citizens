@@ -1,0 +1,240 @@
+{% extends "base/base.html" %}
+
+{% block title %}Детали подданного - Кадровая служба королевства{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2">
+                    <i class="bi bi-person-circle me-2"></i>
+                    Детали подданного
+                </h1>
+                <div class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>
+                    {{ citizen.kingdom.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Информация о подданном -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person me-2"></i>
+                        Личная информация
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Имя:</strong></td>
+                                    <td>{{ citizen.user.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ citizen.user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Возраст:</strong></td>
+                                    <td>{{ citizen.age }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Голубь:</strong></td>
+                                    <td>{{ citizen.pigeon_email }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Королевство:</strong></td>
+                                    <td>{{ citizen.kingdom.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Статус:</strong></td>
+                                    <td>
+                                        {% if citizen.is_enrolled %}
+                                            <span class="badge bg-success">Зачислен</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Ожидает зачисления</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Дата регистрации:</strong></td>
+                                    <td>{{ citizen.user.date_joined|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% if citizen.enrolled_at %}
+                                    <tr>
+                                        <td><strong>Дата зачисления:</strong></td>
+                                        <td>{{ citizen.enrolled_at|date:"d.m.Y H:i" }}</td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>
+                        Действия
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if not citizen.is_enrolled %}
+                        {% if last_attempt and last_attempt.status == 'completed' %}
+                            <form method="post" action="{% url 'kingdom:enroll_citizen' citizen.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success w-100 mb-3"
+                                        onclick="return confirm('Зачислить подданного {{ citizen.user.get_full_name }}?')">
+                                    <i class="bi bi-person-plus me-2"></i>Зачислить подданного
+                                </button>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Подданный не прошел тестовое испытание
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Подданный уже зачислен
+                        </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'kingdom:king_dashboard' %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-arrow-left me-2"></i>Вернуться к списку
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Результаты тестирования -->
+    {% if last_attempt %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clipboard-data me-2"></i>
+                            Результаты тестирования
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Общая статистика -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i>
+                                        <h4 class="mt-2">{{ last_attempt.score }}</h4>
+                                        <small>Правильных ответов</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-x-circle-fill" style="font-size: 2rem;"></i>
+                                        <h4 class="mt-2">{{ last_attempt.wrong_answers }}</h4>
+                                        <small>Неправильных ответов</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-percent" style="font-size: 2rem;"></i>
+                                        <h4 class="mt-2">{{ last_attempt.percentage }}%</h4>
+                                        <small>Процент правильных</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-clock-fill" style="font-size: 2rem;"></i>
+                                        <h4 class="mt-2">{{ last_attempt.total_questions }}</h4>
+                                        <small>Всего вопросов</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Детальные ответы -->
+                        <h6>Детальные ответы:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>№</th>
+                                        <th>Вопрос</th>
+                                        <th>Ответ подданного</th>
+                                        <th>Правильный ответ</th>
+                                        <th>Результат</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for answer in answers %}
+                                        <tr class="{% if answer.is_correct %}table-success{% else %}table-danger{% endif %}">
+                                            <td>{{ answer.question.order }}</td>
+                                            <td>{{ answer.question.text }}</td>
+                                            <td>
+                                                {% if answer.answer %}
+                                                    <span class="badge bg-success">Да</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Нет</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if answer.question.correct_answer %}
+                                                    <span class="badge bg-success">Да</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Нет</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if answer.is_correct %}
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                {% else %}
+                                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 text-muted">Тестирование не пройдено</h5>
+                        <p class="text-muted">Подданный еще не проходил тестовое испытание</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
