@@ -212,6 +212,11 @@ class TestAttempt(models.Model):
         return f"{self.citizen.user.get_full_name()} - {self.test.title}"
     
     @property
+    def wrong_answers(self):
+        """Возвращает количество неправильных ответов"""
+        return self.total_questions - self.score
+    
+    @property
     def percentage(self):
         """Возвращает процент правильных ответов"""
         if self.total_questions == 0:

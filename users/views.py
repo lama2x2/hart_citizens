@@ -56,7 +56,7 @@ class UserRegistrationView(CreateView):
                 user=user,
                 kingdom=kingdom,
                 age=0,  # Будет заполнено позже
-                pigeon_email=user.email
+                pigeon_email=user.email or f"{user.username}@example.com"
             )
         elif user.role == 'king':
             King.objects.create(
@@ -107,7 +107,7 @@ class UserLoginView(LoginView):
             user_agent=self.request.META.get('HTTP_USER_AGENT', '')
         )
         
-        logger.info(f'Пользователь {user.email} вошел в систему')
+        logger.info(f'Пользователь {user.username} вошел в систему')
         
         # Перенаправляем в зависимости от роли
         if user.is_king:

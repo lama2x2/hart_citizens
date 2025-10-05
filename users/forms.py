@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from .models import User
 
@@ -7,11 +7,20 @@ from .models import User
 class UserRegistrationForm(UserCreationForm):
     """Форма регистрации пользователя"""
     
+    username = forms.CharField(
+        label='Username',
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите ваш username'
+        })
+    )
     email = forms.EmailField(
-        label='Email',
+        label='Email (только для подданных)',
+        required=False,
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Введите ваш email'
+            'placeholder': 'Введите ваш email (опционально)'
         })
     )
     first_name = forms.CharField(
@@ -40,7 +49,7 @@ class UserRegistrationForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'role', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'role', 'password1', 'password2')
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,21 +57,34 @@ class UserRegistrationForm(UserCreationForm):
         self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Подтвердите пароль'})
     
     def clean_email(self):
-        """Проверка уникальности email"""
+        """Валидация email"""
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        role = self.cleaned_data.get('role')
+        
+        # Email обязателен только для подданных
+        if role == 'citizen' and not email:
+            raise ValidationError('Email обязателен для подданных')
+        
+        if email and User.objects.filter(email=email).exists():
             raise ValidationError('Пользователь с таким email уже существует')
         return email
+    
+    def clean_username(self):
+        """Валидация username"""
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('Пользователь с таким username уже существует')
+        return username
 
 
-class UserLoginForm(forms.Form):
+class UserLoginForm(AuthenticationForm):
     """Форма входа пользователя"""
     
-    email = forms.EmailField(
-        label='Email',
-        widget=forms.EmailInput(attrs={
+    username = forms.CharField(
+        label='Username',
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Введите ваш email'
+            'placeholder': 'Введите ваш username'
         })
     )
     password = forms.CharField(
@@ -79,6 +101,11 @@ class UserLoginForm(forms.Form):
             'class': 'form-check-input'
         })
     )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите ваш username'})
+        self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите пароль'})
 
 
 class UserProfileForm(forms.ModelForm):

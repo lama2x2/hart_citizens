@@ -58,7 +58,7 @@
                     </div>
                     <div class="progress">
                         <div class="progress-bar" role="progressbar" 
-                             style="width: {{ attempt.answers.count|floatformat:0|add:0|mul:100|div:attempt.total_questions }}%">
+                             style="width: {% widthratio attempt.answers.count attempt.total_questions 100 %}%">
                         </div>
                     </div>
                 </div>

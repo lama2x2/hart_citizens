@@ -34,7 +34,7 @@
             <div class="card bg-danger text-white">
                 <div class="card-body text-center">
                     <i class="bi bi-x-circle-fill" style="font-size: 2rem;"></i>
-                    <h4 class="mt-2">{{ attempt.total_questions|add:attempt.score|mul:-1|add:attempt.total_questions }}</h4>
+                    <h4 class="mt-2">{{ attempt.wrong_answers }}</h4>
                     <small>Неправильных ответов</small>
                 </div>
             </div>

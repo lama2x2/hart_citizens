@@ -94,7 +94,7 @@
                                             <td>{{ citizen.age }}</td>
                                             <td>{{ citizen.pigeon_email }}</td>
                                             <td>
-                                                {% with attempt=citizen.test_attempts.filter.status='completed'|first %}
+                                                {% with attempt=citizen.test_attempts.first %}
                                                     {% if attempt %}
                                                         <span class="badge bg-success">
                                                             {{ attempt.score }}/{{ attempt.total_questions }}
