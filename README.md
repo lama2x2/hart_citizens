@@ -4,7 +4,7 @@
 
 ## Особенности
 
-- **Django 5.0** с кастомной моделью пользователя
+- **Django 5.0** с кастомной моделью пользователя (username-based)
 - **UUID** в качестве первичных ключей для всех моделей
 - **Django REST Framework** с JWT аутентификацией
 - **Swagger/OpenAPI** документация
@@ -13,6 +13,7 @@
 - **Docker** контейнеризация
 - **Логирование** действий с экспортом в Excel
 - **Django Admin** для управления данными
+- **Переменные окружения** через .env файл
 
 ## Структура проекта
 
@@ -73,14 +74,15 @@ hart_citizens/
    venv\Scripts\activate     # Windows
    ```
 
-3. **Установите зависимости:**
+3. **Настройте переменные окружения:**
    ```bash
-   pip install -r requirements.txt
+   cp .env.example .env
+   # Отредактируйте .env файл под ваши настройки
    ```
 
 4. **Настройте базу данных PostgreSQL:**
    - Создайте базу данных `hart_citizens`
-   - Обновите настройки в `hart_citizens_project/settings.py` при необходимости
+   - Обновите настройки в `.env` файле при необходимости
 
 5. **Выполните миграции:**
    ```bash
@@ -124,57 +126,56 @@ hart_citizens/
 
 - **Веб-интерфейс:** http://localhost:8000
 - **Админка:** http://localhost:8000/admin
-- **API документация:** http://localhost:8000/api/docs/ (закомментировано)
-- **ReDoc:** http://localhost:8000/api/redoc/ (закомментировано)
-
-> **Примечание:** API endpoints и документация в настоящее время закомментированы. Для их активации необходимо раскомментировать соответствующие строки в настройках проекта.
+- **API документация:** http://localhost:8000/api/docs/
+- **ReDoc:** http://localhost:8000/api/redoc/
+- **JWT токены:** http://localhost:8000/api/token/
 
 ## Демо-аккаунты
 
 После выполнения команды `init_data` будут созданы следующие аккаунты:
 
 ### Короли:
-- `king.north@example.com` (пароль: `king123`)
-- `king.golden@example.com` (пароль: `king123`)
-- `king.forest@example.com` (пароль: `king123`)
+- `king_north` (пароль: `king123`)
+- `king_golden` (пароль: `king123`)
+- `king_forest` (пароль: `king123`)
 
 ### Подданные:
-- `citizen1@example.com` (пароль: `citizen123`)
-- `citizen2@example.com` (пароль: `citizen123`)
-- `citizen3@example.com` (пароль: `citizen123`)
-- `citizen4@example.com` (пароль: `citizen123`)
-- `citizen5@example.com` (пароль: `citizen123`)
+- `citizen_anna` (пароль: `citizen123`)
+- `citizen_boris` (пароль: `citizen123`)
+- `citizen_victoria` (пароль: `citizen123`)
+- `citizen_grigory` (пароль: `citizen123`)
+- `citizen_darya` (пароль: `citizen123`)
 
 ### Администратор:
-- `admin@example.com` (пароль: `admin123`)
+- `admin` (пароль: `admin123`)
 
 ## API Endpoints
 
-> **Примечание:** Большинство API endpoints в настоящее время закомментированы в настройках проекта. Для активации API необходимо раскомментировать соответствующие строки в `hart_citizens_project/settings.py` и `hart_citizens_project/urls.py`.
+API полностью функционален и доступен через Swagger UI.
 
-### Аутентификация (закомментировано)
-- `POST /api/auth/register/` - Регистрация пользователя
-- `POST /api/auth/login/` - Вход пользователя
-- `POST /api/auth/logout/` - Выход пользователя
-- `POST /api/auth/refresh/` - Обновление JWT токена
+### Аутентификация
+- `POST /api/token/` - Получение JWT токена (username + password)
+- `POST /api/token/refresh/` - Обновление JWT токена
+- `POST /api/users/auth/register/` - Регистрация пользователя
+- `POST /api/users/auth/login/` - Вход пользователя
+- `POST /api/users/auth/logout/` - Выход пользователя
 
-### Пользователи (закомментировано)
-- `GET /api/profile/` - Получение профиля
-- `PUT /api/profile/update/` - Обновление профиля
+### Пользователи
+- `GET /api/users/profile/` - Получение профиля
+- `PUT /api/users/profile/update/` - Обновление профиля
 
-### Королевство (закомментировано)
-- `GET /api/kingdoms/` - Список королевств
-- `GET /api/kings/` - Информация о королях
-- `GET /api/citizens/` - Список подданных
-- `GET /api/tests/` - Тестовые испытания
-- `POST /api/test-attempts/start_test/` - Начало тестирования
-- `POST /api/test-attempts/{id}/answer_question/` - Ответ на вопрос
-- `POST /api/citizens/{id}/enroll/` - Зачисление подданного
-- `GET /api/dashboard/` - Данные для панели управления
+### Королевство
+- `GET /api/kingdom/kingdoms/` - Список королевств
+- `GET /api/kingdom/kings/` - Информация о королях
+- `GET /api/kingdom/citizens/` - Список подданных
+- `GET /api/kingdom/tests/` - Тестовые испытания
+- `POST /api/kingdom/test-attempts/` - Начало тестирования
+- `POST /api/kingdom/citizens/{id}/enroll/` - Зачисление подданного
+- `GET /api/kingdom/dashboard/` - Данные для панели управления
 
-### Логи действий (закомментировано)
-- `GET /api/logs/` - Список логов действий
-- `GET /api/logs/export/` - Экспорт логов в Excel
+### Логи действий
+- `GET /api/action-logs/logs/` - Список логов действий
+- `GET /api/action-logs/logs/export/` - Экспорт логов в Excel
 
 ## Функциональность
 
@@ -222,43 +223,37 @@ hart_citizens/
 ## Технические детали
 
 - **База данных:** PostgreSQL с UUID первичными ключами
-- **Аутентификация:** JWT токены с Simple JWT (закомментировано)
+- **Аутентификация:** JWT токены с Simple JWT (username-based)
 - **Шаблоны:** Django Templates с Bootstrap 5
-- **API:** Django REST Framework с автоматической документацией (закомментировано)
+- **API:** Django REST Framework с автоматической документацией (Swagger/OpenAPI)
 - **Логирование:** Встроенное Django логирование + кастомные логи действий
 - **Импорт/экспорт:** django-import-export для админки с отдельными файлами resources.py
 - **Контейнеризация:** Docker с PostgreSQL и Redis
 - **Приложения:** users, kingdom, action_logs (отдельное приложение для логов)
 
-## Активация API
+## Переменные окружения
 
-Для активации API endpoints необходимо:
+Проект использует `.env` файл для конфигурации. Создайте `.env` файл на основе `.env.example`:
 
-1. **Раскомментировать в `hart_citizens_project/settings.py`:**
-   ```python
-   INSTALLED_APPS = [
-       # ...
-       "rest_framework",
-       "rest_framework_simplejwt",
-       "drf_spectacular",
-       "corsheaders",
-       # ...
-   ]
-   ```
+```env
+# Django Settings
+SECRET_KEY=your-secret-key
+DEBUG=1
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
 
-2. **Раскомментировать в `hart_citizens_project/urls.py`:**
-   ```python
-   urlpatterns = [
-       # ...
-       path("api/action-logs/", include("api.action_logs.urls")),
-       path("api/kingdom/", include("api.kingdom.urls")),
-       path("api/users/", include("api.users.urls")),
-       path("api/auth/", include("rest_framework_simplejwt.urls")),
-       path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-       path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-       path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-   ]
-   ```
+# Database Settings (для Docker)
+DB_NAME=hart_citizens
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+
+# Redis Settings
+REDIS_URL=redis://redis:6379/0
+
+# Email Settings
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+```
 
 ## Разработка
 

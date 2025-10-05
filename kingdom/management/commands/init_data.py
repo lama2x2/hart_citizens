@@ -127,21 +127,21 @@ class Command(BaseCommand):
         # Создаем демо-королей
         demo_kings = [
             {
-                'email': 'king.north@example.com',
+                'username': 'king_north',
                 'first_name': 'Эдрик',
                 'last_name': 'Северный',
                 'kingdom': kingdoms[0],
                 'max_citizens': 3
             },
             {
-                'email': 'king.golden@example.com',
+                'username': 'king_golden',
                 'first_name': 'Аурелиус',
                 'last_name': 'Золотой',
                 'kingdom': kingdoms[1],
                 'max_citizens': 5
             },
             {
-                'email': 'king.forest@example.com',
+                'username': 'king_forest',
                 'first_name': 'Сильван',
                 'last_name': 'Лесной',
                 'kingdom': kingdoms[2],
@@ -150,19 +150,15 @@ class Command(BaseCommand):
         ]
         
         for king_data in demo_kings:
-            user, created = User.objects.get_or_create(
-                email=king_data['email'],
-                defaults={
-                    'first_name': king_data['first_name'],
-                    'last_name': king_data['last_name'],
-                    'role': 'king',
-                    'is_active': True
-                }
-            )
-            
-            if created:
-                user.set_password('king123')
-                user.save()
+            if not User.objects.filter(username=king_data['username']).exists():
+                user = User.objects.create_user(
+                    username=king_data['username'],
+                    password='king123',
+                    first_name=king_data['first_name'],
+                    last_name=king_data['last_name'],
+                    role='king',
+                    is_active=True
+                )
                 
                 king, created = King.objects.get_or_create(
                     user=user,
@@ -176,6 +172,7 @@ class Command(BaseCommand):
         # Создаем демо-подданных
         demo_citizens = [
             {
+                'username': 'citizen_anna',
                 'email': 'citizen1@example.com',
                 'first_name': 'Анна',
                 'last_name': 'Смелая',
@@ -184,6 +181,7 @@ class Command(BaseCommand):
                 'pigeon_email': 'anna.pigeon@example.com'
             },
             {
+                'username': 'citizen_boris',
                 'email': 'citizen2@example.com',
                 'first_name': 'Борис',
                 'last_name': 'Мудрый',
@@ -192,6 +190,7 @@ class Command(BaseCommand):
                 'pigeon_email': 'boris.pigeon@example.com'
             },
             {
+                'username': 'citizen_victoria',
                 'email': 'citizen3@example.com',
                 'first_name': 'Виктория',
                 'last_name': 'Быстрая',
@@ -200,6 +199,7 @@ class Command(BaseCommand):
                 'pigeon_email': 'victoria.pigeon@example.com'
             },
             {
+                'username': 'citizen_grigory',
                 'email': 'citizen4@example.com',
                 'first_name': 'Григорий',
                 'last_name': 'Сильный',
@@ -208,6 +208,7 @@ class Command(BaseCommand):
                 'pigeon_email': 'grigory.pigeon@example.com'
             },
             {
+                'username': 'citizen_darya',
                 'email': 'citizen5@example.com',
                 'first_name': 'Дарья',
                 'last_name': 'Красивая',
@@ -218,19 +219,16 @@ class Command(BaseCommand):
         ]
         
         for citizen_data in demo_citizens:
-            user, created = User.objects.get_or_create(
-                email=citizen_data['email'],
-                defaults={
-                    'first_name': citizen_data['first_name'],
-                    'last_name': citizen_data['last_name'],
-                    'role': 'citizen',
-                    'is_active': True
-                }
-            )
-            
-            if created:
-                user.set_password('citizen123')
-                user.save()
+            if not User.objects.filter(username=citizen_data['username']).exists():
+                user = User.objects.create_user(
+                    username=citizen_data['username'],
+                    password='citizen123',
+                    email=citizen_data['email'],
+                    first_name=citizen_data['first_name'],
+                    last_name=citizen_data['last_name'],
+                    role='citizen',
+                    is_active=True
+                )
                 
                 citizen, created = Citizen.objects.get_or_create(
                     user=user,
@@ -247,27 +245,27 @@ class Command(BaseCommand):
         # Создаем суперпользователя
         if not User.objects.filter(is_superuser=True).exists():
             superuser = User.objects.create_superuser(
-                email='admin@example.com',
+                username='admin',
                 password='admin123',
                 first_name='Администратор',
                 last_name='Системы',
                 role='king'
             )
-            self.stdout.write('Создан суперпользователь: admin@example.com (пароль: admin123)')
+            self.stdout.write('Создан суперпользователь: admin (пароль: admin123)')
         
         self.stdout.write(
             self.style.SUCCESS('Начальные данные успешно созданы!')
         )
         self.stdout.write('\nДемо-аккаунты:')
         self.stdout.write('Короли:')
-        self.stdout.write('  - king.north@example.com (пароль: king123)')
-        self.stdout.write('  - king.golden@example.com (пароль: king123)')
-        self.stdout.write('  - king.forest@example.com (пароль: king123)')
+        self.stdout.write('  - king_north (пароль: king123)')
+        self.stdout.write('  - king_golden (пароль: king123)')
+        self.stdout.write('  - king_forest (пароль: king123)')
         self.stdout.write('\nПодданные:')
-        self.stdout.write('  - citizen1@example.com (пароль: citizen123)')
-        self.stdout.write('  - citizen2@example.com (пароль: citizen123)')
-        self.stdout.write('  - citizen3@example.com (пароль: citizen123)')
-        self.stdout.write('  - citizen4@example.com (пароль: citizen123)')
-        self.stdout.write('  - citizen5@example.com (пароль: citizen123)')
+        self.stdout.write('  - citizen_anna (пароль: citizen123)')
+        self.stdout.write('  - citizen_boris (пароль: citizen123)')
+        self.stdout.write('  - citizen_victoria (пароль: citizen123)')
+        self.stdout.write('  - citizen_grigory (пароль: citizen123)')
+        self.stdout.write('  - citizen_darya (пароль: citizen123)')
         self.stdout.write('\nАдминистратор:')
-        self.stdout.write('  - admin@example.com (пароль: admin123)')
+        self.stdout.write('  - admin (пароль: admin123)')
