@@ -8,11 +8,10 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 import logging
 
-from .models import ActionLog, Kingdom
+from .models import ActionLog
 from .utils import export_logs_to_excel, get_user_activity_logs, get_kingdom_activity_logs
-from .admin import ActionLogResource
 
-logger = logging.getLogger('kingdom')
+logger = logging.getLogger('action_logs')
 
 
 @staff_member_required
@@ -82,7 +81,7 @@ def logs_dashboard(request):
         'date_to': date_to,
     }
     
-    return render(request, 'kingdom/logs_dashboard.html', context)
+    return render(request, 'action_logs/logs_dashboard.html', context)
 
 
 @staff_member_required
@@ -158,7 +157,7 @@ def user_logs(request):
         'user': request.user,
     }
     
-    return render(request, 'kingdom/user_logs.html', context)
+    return render(request, 'action_logs/user_logs.html', context)
 
 
 @login_required
@@ -183,7 +182,7 @@ def kingdom_logs(request):
         'kingdom': kingdom,
     }
     
-    return render(request, 'kingdom/kingdom_logs.html', context)
+    return render(request, 'action_logs/kingdom_logs.html', context)
 
 
 @staff_member_required
@@ -227,4 +226,4 @@ def logs_statistics(request):
         'kingdom_stats': kingdom_stats,
     }
     
-    return render(request, 'kingdom/logs_statistics.html', context)
+    return render(request, 'action_logs/logs_statistics.html', context)

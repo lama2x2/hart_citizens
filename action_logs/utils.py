@@ -2,7 +2,7 @@ import logging
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from action_logs.models import ActionLog
+from .models import ActionLog
 
 User = get_user_model()
 logger = logging.getLogger(__name__)

@@ -9,8 +9,9 @@ import logging
 
 from kingdom.models import (
     Kingdom, King, Citizen, Test, Question, 
-    TestAttempt, Answer, ActionLog
+    TestAttempt, Answer
 )
+from action_logs.models import ActionLog
 from users.models import User
 
 logger = logging.getLogger('kingdom')

@@ -27,10 +27,12 @@ urlpatterns = [
     # Приложения
     path("", include("users.urls")),
     path("kingdom/", include("kingdom.urls")),
+    path("action-logs/", include("action_logs.urls")),
     
     # API
     path("api/", include("users.api.urls")),
     path("api/", include("kingdom.api.urls")),
+    path("api/", include("action_logs.api.urls")),
     
     # JWT
     path("api/auth/", include("rest_framework_simplejwt.urls")),

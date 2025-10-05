@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from . import logs_views
 
 app_name = 'kingdom'
 
@@ -18,10 +17,4 @@ urlpatterns = [
     # Управление подданными (для королей)
     path('citizen/<uuid:citizen_id>/enroll/', views.enroll_citizen, name='enroll_citizen'),
     path('citizen/<uuid:pk>/details/', views.KingCitizenDetailsView.as_view(), name='citizen_details'),
-    
-    # Логи
-    path('logs/', logs_views.user_logs, name='user_logs'),
-    path('logs/kingdom/', logs_views.kingdom_logs, name='kingdom_logs'),
-    path('logs/export/', logs_views.export_logs, name='export_logs'),
-    path('logs/statistics/', logs_views.logs_statistics, name='logs_statistics'),
 ]

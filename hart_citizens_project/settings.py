@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # Local apps
     "users",
     "kingdom",
+    "action_logs",
 ]
 
 MIDDLEWARE = [
@@ -399,15 +400,15 @@ JAZZMIN_SETTINGS = {
     "hide_models": [],
 
     # List of apps (and/or models) to base side menu ordering off of (does not need to contain all apps/models)
-    "order_with_respect_to": ["users", "kingdom"],
+    "order_with_respect_to": ["users", "kingdom", "action_logs"],
 
     # Custom links to append to app groups, keyed on app name
     "custom_links": {
-        "kingdom": [{
+        "action_logs": [{
             "name": "Статистика логов",
-            "url": "/kingdom/logs/statistics/",
+            "url": "/action-logs/statistics/",
             "icon": "fas fa-chart-bar",
-            "permissions": ["kingdom.view_actionlog"]
+            "permissions": ["action_logs.view_actionlog"]
         }]
     },
 
@@ -425,7 +426,7 @@ JAZZMIN_SETTINGS = {
         "kingdom.Question": "fas fa-question-circle",
         "kingdom.TestAttempt": "fas fa-tasks",
         "kingdom.Answer": "fas fa-check-circle",
-        "kingdom.ActionLog": "fas fa-history",
+        "action_logs.ActionLog": "fas fa-history",
     },
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas fa-chevron-circle-right",

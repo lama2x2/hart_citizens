@@ -1,5 +1,6 @@
 from django.db.models import Count
-from kingdom.models import Kingdom, King, Citizen, Test, ActionLog
+from kingdom.models import Kingdom, King, Citizen, Test
+from action_logs.models import ActionLog
 from users.models import User
 
 
