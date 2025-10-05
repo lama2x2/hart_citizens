@@ -1,0 +1,218 @@
+{% extends "base/base.html" %}
+
+{% block title %}Панель подданного - Кадровая служба королевства{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2">
+                    <i class="bi bi-person-fill text-primary me-2"></i>
+                    Панель подданного
+                </h1>
+                <div class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>
+                    {{ citizen.kingdom.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статус зачисления -->
+    <div class="row mb-4">
+        <div class="col-12">
+            {% if citizen.is_enrolled and king %}
+                <div class="alert alert-success" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1">Поздравляем! Вы зачислены!</h5>
+                            <p class="mb-0">
+                                Вы успешно стали подданным короля <strong>{{ king.user.get_full_name }}</strong> 
+                                в королевстве <strong>{{ citizen.kingdom.name }}</strong>.
+                                <br>
+                                <small class="text-muted">Дата зачисления: {{ citizen.enrolled_at|date:"d.m.Y в H:i" }}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-hourglass-split me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1">Ожидание зачисления</h5>
+                            <p class="mb-0">
+                                Вы прошли тестовое испытание и ожидаете решения короля о зачислении в подданные.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Информация о подданном -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>
+                        Информация о подданном
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Имя:</strong></td>
+                            <td>{{ citizen.user.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td>{{ citizen.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Возраст:</strong></td>
+                            <td>{{ citizen.age }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Голубь:</strong></td>
+                            <td>{{ citizen.pigeon_email }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Королевство:</strong></td>
+                            <td>{{ citizen.kingdom.name }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clipboard-check me-2"></i>
+                        Статус тестирования
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if test %}
+                        {% if has_passed_test %}
+                            <div class="text-center">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 text-success">Тест пройден!</h5>
+                                {% if last_attempt %}
+                                    <p class="text-muted">
+                                        Результат: {{ last_attempt.score }}/{{ last_attempt.total_questions }} 
+                                        ({{ last_attempt.percentage }}%)
+                                    </p>
+                                    <a href="{% url 'kingdom:test_results' last_attempt.id %}" 
+                                       class="btn btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Посмотреть результаты
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="text-center">
+                                <i class="bi bi-hourglass-split text-warning" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 text-warning">Тест не пройден</h5>
+                                <p class="text-muted">Пройдите тестовое испытание для возможности зачисления</p>
+                                <a href="{% url 'kingdom:test' %}" class="btn btn-primary">
+                                    <i class="bi bi-play-circle me-1"></i>Начать тест
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center">
+                            <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 text-danger">Тест недоступен</h5>
+                            <p class="text-muted">Для вашего королевства не создано тестовое испытание</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- История попыток тестирования -->
+    {% if citizen.test_attempts.exists %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clock-history me-2"></i>
+                            История тестирования
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Тест</th>
+                                        <th>Статус</th>
+                                        <th>Результат</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attempt in citizen.test_attempts.all %}
+                                        <tr>
+                                            <td>{{ attempt.started_at|date:"d.m.Y H:i" }}</td>
+                                            <td>{{ attempt.test.title }}</td>
+                                            <td>
+                                                {% if attempt.status == 'completed' %}
+                                                    <span class="badge bg-success">Завершен</span>
+                                                {% elif attempt.status == 'in_progress' %}
+                                                    <span class="badge bg-warning">В процессе</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Не пройден</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if attempt.status == 'completed' %}
+                                                    {{ attempt.score }}/{{ attempt.total_questions }} 
+                                                    ({{ attempt.percentage }}%)
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if attempt.status == 'completed' %}
+                                                    <a href="{% url 'kingdom:test_results' attempt.id %}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i>Результаты
+                                                    </a>
+                                                {% elif attempt.status == 'in_progress' %}
+                                                    <a href="{% url 'kingdom:test' %}" 
+                                                       class="btn btn-sm btn-primary">
+                                                        <i class="bi bi-play-circle me-1"></i>Продолжить
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Автообновление статуса зачисления каждые 60 секунд
+    setTimeout(function() {
+        location.reload();
+    }, 60000);
+</script>
+{% endblock %}

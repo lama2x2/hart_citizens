@@ -1,0 +1,196 @@
+{% extends "base/base.html" %}
+
+{% block title %}Профиль - Кадровая служба королевства{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2">
+                    <i class="bi bi-person-circle me-2"></i>
+                    Профиль пользователя
+                </h1>
+                <div class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>
+                    Зарегистрирован: {{ user.date_joined|date:"d.m.Y" }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Основная информация -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person me-2"></i>
+                        Личная информация
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'users:update_profile' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.first_name.id_for_label }}" class="form-label">Имя</label>
+                                {{ profile_form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                                {{ profile_form.last_name }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ profile_form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ profile_form.email }}
+                            <div class="form-text">{{ profile_form.email.help_text }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Роль</label>
+                            <div class="form-control-plaintext">
+                                {% if user.is_king %}
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-crown me-1"></i>Король
+                                    </span>
+                                {% elif user.is_citizen %}
+                                    <span class="badge bg-primary">
+                                        <i class="bi bi-person me-1"></i>Подданный
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Статус</label>
+                            <div class="form-control-plaintext">
+                                {% if user.is_active %}
+                                    <span class="badge bg-success">Активен</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Неактивен</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i>Сохранить изменения
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Дополнительная информация -->
+        <div class="col-lg-4">
+            <!-- Информация о короле -->
+            {% if king_profile %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-crown me-2"></i>
+                            Информация о короле
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td><strong>Королевство:</strong></td>
+                                <td>{{ king_profile.kingdom.name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Макс. подданных:</strong></td>
+                                <td>{{ king_profile.max_citizens }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Текущих:</strong></td>
+                                <td>{{ king_profile.current_citizens_count }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Может принять:</strong></td>
+                                <td>
+                                    {% if king_profile.can_accept_more_citizens %}
+                                        <span class="badge bg-success">Да</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Нет</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Информация о подданном -->
+            {% if citizen_profile %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-person me-2"></i>
+                            Информация о подданном
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td><strong>Королевство:</strong></td>
+                                <td>{{ citizen_profile.kingdom.name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Возраст:</strong></td>
+                                <td>{{ citizen_profile.age }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Голубь:</strong></td>
+                                <td>{{ citizen_profile.pigeon_email }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Статус:</strong></td>
+                                <td>
+                                    {% if citizen_profile.is_enrolled %}
+                                        <span class="badge bg-success">Зачислен</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Ожидает</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Статистика активности -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Статистика активности
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm">
+                        <tr>
+                            <td><strong>Последний вход:</strong></td>
+                            <td>
+                                {% if user.last_login %}
+                                    {{ user.last_login|date:"d.m.Y H:i" }}
+                                {% else %}
+                                    <span class="text-muted">Никогда</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Дата регистрации:</strong></td>
+                            <td>{{ user.date_joined|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                        {% if user.is_citizen %}
+                            <tr>
+                                <td><strong>Попыток тестирования:</strong></td>
+                                <td>{{ user.citizen_profile.test_attempts.count }}</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

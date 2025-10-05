@@ -1,0 +1,103 @@
+# Инструкции по запуску проекта Hart Citizens
+
+## Быстрый старт
+
+### 1. Установка зависимостей
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Настройка базы данных
+Убедитесь, что PostgreSQL запущен и создана база данных `hart_citizens`.
+
+### 3. Выполнение миграций
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 4. Создание начальных данных
+```bash
+python manage.py init_data
+```
+
+### 5. Запуск сервера
+```bash
+python manage.py runserver
+```
+
+## Доступ к приложению
+
+- **Главная страница:** http://localhost:8000
+- **Админка:** http://localhost:8000/admin
+- **API документация:** http://localhost:8000/api/docs/
+- **ReDoc:** http://localhost:8000/api/redoc/
+
+## Демо-аккаунты
+
+После выполнения `init_data` доступны следующие аккаунты:
+
+### Короли:
+- `king.north@example.com` (пароль: `king123`)
+- `king.golden@example.com` (пароль: `king123`)
+- `king.forest@example.com` (пароль: `king123`)
+
+### Подданные:
+- `citizen1@example.com` (пароль: `citizen123`)
+- `citizen2@example.com` (пароль: `citizen123`)
+- `citizen3@example.com` (пароль: `citizen123`)
+- `citizen4@example.com` (пароль: `citizen123`)
+- `citizen5@example.com` (пароль: `citizen123`)
+
+### Администратор:
+- `admin@example.com` (пароль: `admin123`)
+
+## Docker запуск
+
+```bash
+docker-compose up --build
+```
+
+## Тестирование
+
+```bash
+python manage.py test
+```
+
+## Структура проекта
+
+```
+hart_citizens/
+├── hart_citizens_project/     # Настройки Django
+├── users/                     # Приложение пользователей
+├── kingdom/                   # Приложение королевства
+├── templates/                 # Шаблоны Jinja2
+├── static/                    # Статические файлы
+├── logs/                      # Логи приложения
+├── requirements.txt           # Зависимости
+├── docker-compose.yml         # Docker конфигурация
+├── Dockerfile                 # Docker образ
+└── manage.py                  # Django управление
+```
+
+## Основные функции
+
+1. **Регистрация пользователей** с выбором роли (Король/Подданный)
+2. **Тестовые испытания** для подданных
+3. **Зачисление подданных** королями
+4. **REST API** с JWT аутентификацией
+5. **Логирование действий** с экспортом в Excel
+6. **Django Admin** для управления данными
+7. **Swagger документация** для API
+
+## Технические детали
+
+- Django 5.0 с кастомной моделью User
+- UUID первичные ключи для всех моделей
+- PostgreSQL база данных
+- JWT аутентификация
+- Jinja2 шаблонизатор
+- Bootstrap 5 для UI
+- Docker контейнеризация
+- Celery для фоновых задач
+- Логирование в файлы и базу данных
